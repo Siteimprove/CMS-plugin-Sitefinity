@@ -1,0 +1,13 @@
+﻿@model Siteimprove.Integration.Sitefinity.Mvc.ViewModels.OverlayViewModel
+@using Siteimprove.Integration.Sitefinity.Mvc.Helpers
+
+<script src="@Model.ExternalScript.Url"></script>
+
+<script type="text/javascript">
+   (function () {
+    var _si = window._si || [];
+    _si.push(['domain', '@Model.Domain', '@Model.Token', function () {
+        @Html.RenderIfTrue(Model.ShouldLogActivity, "console.log('Loading the " + Model.Domain + "  domain into the Siteimprove overlay');")
+    }]);
+})();
+</script>
