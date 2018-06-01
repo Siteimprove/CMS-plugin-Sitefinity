@@ -3,9 +3,12 @@
 The Siteimprove CMS Plugin bridges the gap between Progress Sitefinity CMS and the Siteimprove Intelligence Platform. You are able to put your Siteimprove results to use where they are most valuable – during your content creation and editing process as well as during any operation in the CMS backend pages.
 
 ## Installation
-
 ### Getting Started
+The project is available in the NuGet gallery. You can click on [https://www.nuget.org/packages/Siteimprove.Integration.Sitefinity](https://www.nuget.org/packages/Siteimprove.Integration.Sitefinity) to check if there is a version of the package that matches your Sitefinity version. If there is a package version that is an exact match with yours, you can install the Siteimprove plugin via NuGet and skip the installation steps below. 
 
+If you Sitefinity version is different, please go through the following installation steps to prepare a build that matches your specific Sitefinity version.
+
+### Clone the repo
 - Clone the repository using the command `git clone https://github.com/Siteimprove/CMS-plugin-Sitefinity.git` and checkout the `master` branch. 
 
 ### Build the Project
@@ -17,16 +20,20 @@ You will also need to make sure that your targeted Sitefinity version matches th
 - If you are adding the Plugin as part of a Sitefinity solution, ensure that the main SitefinityWebApp project is the startup project for the solution
 
 ### Activation
-The Plugin leverages the *PreApplicationStartMethodAttribute* to hook to the Sitefinity startup process and self-install itself. This is done using the approach described in the following [blog post](https://www.sitefinity.com/blogs/peter-marinovs-blog/2013/03/20/creating-self-installing-widgets-and-modules-in-sitefinity). Assuming, you have build the project, all you need to do to activate the Plugin is to:
+The Plugin leverages the *PreApplicationStartMethodAttribute* to hook to the Sitefinity startup process and self-install itself. This is done using the approach described in the following [blog post](https://www.sitefinity.com/blogs/peter-marinovs-blog/2013/03/20/creating-self-installing-widgets-and-modules-in-sitefinity). Assuming, you have built the project, all you need to do to activate the Plugin is to:
 
-- Ensure that the compiled assembly is in the bin folder of your Sitefinity solution
+- Ensure that the compiled `Siteimprove.Integration.Sitefinity.dll` assembly is in the bin folder of your Sitefinity solution
 - Once the solution runs successfully, authenticate as administrator and go to the *[Administration » Modules & Services](https://docs.sitefinity.com/activate-and-deactivate-modules)*
-- Simply find the "Siteimprove Module" and install it to switch it on
+- Simply find the "Siteimprove Module" and ensure the modules is Active
 
 If you were successful, you should see the Siteimprove overlay onto the next and every backend Sitefinity page
 
+![Image of Overlay](https://user-images.githubusercontent.com/2509966/40830732-da7a752e-658f-11e8-9ed3-519ae197ec88.png)
+
 ## Configuration Options
 The Siteimprove Plugin has the following configuration options, which are located under `Settings > Advanced Settings > Siteimprove`
+
+![Image of settings](https://user-images.githubusercontent.com/2509966/40831548-fc1caa56-6591-11e8-8acc-b5431427a655.png)
 
 ### Log Activity in the Browser Console
 Checking this setting to True, will generate logs in the browser console, so that you can monitor the activity of the plugin. Useful for debugging on just ensuring that it works as expected.
