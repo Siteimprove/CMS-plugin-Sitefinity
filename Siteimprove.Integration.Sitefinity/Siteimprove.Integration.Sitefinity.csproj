@@ -141,6 +141,7 @@
     <Reference Include="System.Web.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.3\lib\net45\System.Web.Cors.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
     </Reference>
@@ -247,12 +248,17 @@
     <Compile Include="Configuration\SiteimproveConfig.cs" />
     <Compile Include="DTO\RecheckPageRequest.cs" />
     <Compile Include="DTO\TokenResponse.cs" />
+    <EmbeddedResource Include="FieldControls\OverlayScriptField\OverlayScriptField.ascx" />
+    <Compile Include="FieldControls\OverlayScriptField\OverlayScriptField.cs" />
     <Compile Include="Infrastructure\PageEventHandler.cs" />
     <Compile Include="Infrastructure\SiteimproveHttpClient.cs" />
     <Compile Include="Mvc\Controllers\SiteimproveController.cs" />
     <Compile Include="Mvc\Helpers\HtmlHelper.cs" />
     <Compile Include="Mvc\Models\BackendPageOverlayModel.cs" />
+    <Compile Include="Mvc\Models\ConfigModel.cs" />
     <Compile Include="Mvc\Models\EditPageOverlayModel.cs" />
+    <Compile Include="Mvc\Models\EditPropertiesOverlayModel.cs" />
+    <Compile Include="Mvc\Models\IConfigModel.cs" />
     <Compile Include="Mvc\Models\ITokenModel.cs" />
     <Compile Include="Mvc\Models\IPageOverlayModel.cs" />
     <Compile Include="Mvc\Models\IUrlModel.cs" />
@@ -265,10 +271,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\SiteimproveResources.cs" />
     <Compile Include="Configuration\TokenConfigElement.cs" />
+    <Compile Include="SiteimproveInstaller.cs" />
     <Compile Include="SiteimproveModule.cs" />
     <Compile Include="Infrastructure\OverlayPageEditorRouteHandler.cs" />
     <Compile Include="Web\IControllerHost.cs" />
     <Compile Include="Web\ControllerHost.cs" />
+    <EmbeddedResource Include="FieldControls\OverlayScriptField\OverlayScriptField.js" />
+    <EmbeddedResource Include="ScriptExtensions\siteimprove.js" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

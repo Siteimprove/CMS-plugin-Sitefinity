@@ -14,7 +14,8 @@ using Siteimprove.Integration.Sitefinity.Infrastructure;
 using Siteimprove.Integration.Sitefinity.Mvc.Models;
 using Siteimprove.Integration.Sitefinity.Configuration;
 using Siteimprove.Integration.Sitefinity.Resources;
-
+using System.Collections.Generic;
+using Telerik.Sitefinity.Abstractions.VirtualPath.Configuration;
 
 namespace Siteimprove.Integration.Sitefinity
 {
@@ -26,6 +27,8 @@ namespace Siteimprove.Integration.Sitefinity
         public override Guid LandingPageId => Guid.Empty;
 
         public override Type[] Managers => new Type[0];
+
+        private SiteimproveInstaller installer;
 
         protected override ConfigSection GetModuleConfig()
         {
@@ -45,6 +48,13 @@ namespace Siteimprove.Integration.Sitefinity
             SubscribeToEvents();
         }
 
+        protected override IDictionary<string, Action<VirtualPathElement>> GetVirtualPaths()
+        {
+            var paths = new Dictionary<string, Action<VirtualPathElement>>();
+            paths.Add(SiteimproveVirtualPath, null);
+            return paths;
+        }
+
         public override void Unload()
         {
             this.UnsubscribeFromEvents();
@@ -53,18 +63,29 @@ namespace Siteimprove.Integration.Sitefinity
 
         public override void Install(SiteInitializer initializer)
         {
-            Log.Write("Intalling Siteimprove Plugin module: Success", ConfigurationPolicy.Trace);
+            installer = new SiteimproveInstaller();
+            this.installer.Install(initializer);
+            Log.Write("Installing Siteimprove Plugin module: Success", ConfigurationPolicy.Trace);
         }
 
         public override void Uninstall(SiteInitializer initializer)
         {
+            this.installer = new SiteimproveInstaller();
+            this.installer.Uninstall(initializer);
             base.Uninstall(initializer);
             Log.Write("Uninstalling Siteimprove Plugin module: Success", ConfigurationPolicy.Trace);
         }
 
+        public override void Upgrade(SiteInitializer initializer, Version upgradeFrom)
+        {
+            if (upgradeFrom < SiteimproveVersion10_2_6600_1)
+                this.installer.UpgradeTo10_2_6600_1(initializer);
+
+            Log.Write("Upgrading Siteimprove Plugin module: Success", ConfigurationPolicy.Trace);
+        }
+
         public static void Register()
         {
-
             bool isModuleInstalled = Config.Get<SystemConfig>().ApplicationModules.Elements
                .Any(m => m.Name.Equals(SiteimproveModule.ModuleName));
 
@@ -157,5 +178,8 @@ namespace Siteimprove.Integration.Sitefinity
 
         public const string ModuleName = "SiteimproveModule";
         public const string ModuleTitle = "Siteimprove";
+        public const string SiteimproveVirtualPath = "~/Siteimprove/*";
+
+        public static readonly Version SiteimproveVersion10_2_6600_1 = new Version(10, 2, 6600, 1);
     }
 }

@@ -36,14 +36,16 @@ namespace Siteimprove.Integration.Sitefinity.Infrastructure
             var isPublishingOperation = false;
             var isTransaction = this.IsCommittingTransaction(eventArgs);
             if (isTransaction)
-                isPublishingOperation = this.IsCurrentHttpRequestForPublishing() || this.IsUserSimulatedFromBackgroundTask();
+                isPublishingOperation = this.IsCurrentHttpRequestForPublishing()
+                    || this.IsPageSaveRequest()
+                    || this.IsUserSimulatedFromBackgroundTask();
 
             return isPublishingOperation;
         }
 
         public bool TrySetPageData(object eventSender)
         {
-            var isParseSuccessfull = false;
+            var isParseSuccessful = false;
 
             if (eventSender is PageDataProvider dataProvider)
             {
@@ -55,11 +57,11 @@ namespace Siteimprove.Integration.Sitefinity.Infrastructure
                 {
                     this._pageData = pageData;
                     if (this.IsTransactionTypeUpdating(dataProvider))
-                        isParseSuccessfull = true;
+                        isParseSuccessful = true;
                 }
             }
 
-            return isParseSuccessfull;
+            return isParseSuccessful;
         }
 
         public bool IsFrontendNode()
@@ -92,7 +94,6 @@ namespace Siteimprove.Integration.Sitefinity.Infrastructure
                         Log.Write("Unhandled exception during scheduling a Siteimprove page recheck operation " + url + Environment.NewLine + ex, ConfigurationPolicy.ErrorLog);
                     }
                 });
-
             }
         }
 
@@ -106,6 +107,14 @@ namespace Siteimprove.Integration.Sitefinity.Infrastructure
             var url = HttpContext.Current.Request.Url.ToString();
 
             return (url.Contains("workflowOperation=Publish") || url.Contains("/batchPublishDraft/"));
+        }
+
+        private bool IsPageSaveRequest()
+        {
+            var url = HttpContext.Current.Request.Url.ToString();
+            var httpMethod = HttpContext.Current.Request.HttpMethod.ToUpperInvariant();
+
+            return httpMethod == "PUT" && url.Contains("PagesService.svc");
         }
 
         private bool IsUserSimulatedFromBackgroundTask()

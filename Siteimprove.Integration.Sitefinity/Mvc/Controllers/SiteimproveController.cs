@@ -29,6 +29,54 @@ namespace Siteimprove.Integration.Sitefinity.Mvc.Controllers
             }
         }
 
+        [Route("~/siteimprove/propertiesBySite/{siteId?}")]
+        [HttpGet]
+        public JsonResult OverlayPropertiesBySite(Guid? siteId)
+        {
+            try
+            {
+                var model = new EditPropertiesOverlayModel();
+                var siteIdGuid = siteId ?? Guid.Empty;
+
+                var viewModel = model.GetViewModelBySite(siteIdGuid);
+                var result = new
+                {
+                    Token = viewModel.Token,
+                    ShouldLogActivity = viewModel.ShouldLogActivity,
+                    Domain = viewModel.Domain
+                };
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception exception)
+            {
+                Log.Write(Res.Get<SiteimproveResources>().ErrorOverlayWidgetLoading + this.HttpContext.Request.Url.AbsoluteUri + Environment.NewLine + exception, ConfigurationPolicy.ErrorLog);
+                throw new ApplicationException();
+            }
+        }
+
+        [Route("~/siteimprove/propertiesByPage/{pageId}")]
+        [HttpGet]
+        public JsonResult OverlayPropertiesByPage(string pageId)
+        {
+            try
+            {
+                var model = new EditPropertiesOverlayModel();
+                var viewModel = model.GetViewModelByPage(pageId);
+                var result = new
+                {
+                    Token = viewModel.Token,
+                    ShouldLogActivity = viewModel.ShouldLogActivity,
+                    Domain = viewModel.Domain
+                };
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception exception)
+            {
+                Log.Write(Res.Get<SiteimproveResources>().ErrorOverlayWidgetLoading + this.HttpContext.Request.Url.AbsoluteUri + Environment.NewLine + exception, ConfigurationPolicy.ErrorLog);
+                throw new ApplicationException();
+            }
+        }
+
         protected override void HandleUnknownAction(string actionName)
         {
             this.ActionInvoker.InvokeAction(this.ControllerContext, "Index");

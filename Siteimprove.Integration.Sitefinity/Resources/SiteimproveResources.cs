@@ -174,7 +174,7 @@ namespace Siteimprove.Integration.Sitefinity.Resources
                 return this["ErrorRecheckPageException"];
             }
         }
-        
+
         [ResourceEntry("ErrorFetchTokenResponse", Value = "Request for token at {0} did not return status 200 OK, but status {1} instead. The returned content was {2}", Description = "Error message used upon failed response on the fetching token")]
         public string ErrorFetchTokenResponse
         {
@@ -208,6 +208,78 @@ namespace Siteimprove.Integration.Sitefinity.Resources
             get
             {
                 return this["ErrorSavingTokenInConfigs"];
+            }
+        }
+
+        [ResourceEntry("ErrorRegisteringSiteimprovePageDetailsExtension", Value = "Siteimprove Plugin: Error registering page details extension script.", Description = "Displayed when Siteimprove module is installed and an error occurred during script extension registration in the config.")]
+        public string ErrorRegisteringSiteimprovePageDetailsExtension
+        {
+            get
+            {
+                return this["ErrorRegisteringSiteimprovePageDetailsExtension"];
+            }
+        }
+
+        [ResourceEntry("ErrorAddingVirtualPath", Value = "Siteimprove Plugin: Error adding value for Virtual path.", Description = "Displayed when Siteimprove module is installed and an error occurred during modification of VirtualPath settings.")]
+        public string ErrorAddingVirtualPath
+        {
+            get
+            {
+                return this["ErrorAddingVirtualPath"];
+            }
+        }
+
+        [ResourceEntry("ErrorAddingFieldControl", Value = "Siteimprove Plugin: Error adding Siteimprove overlay field control.", Description = "Displayed when Siteimprove module is installed and an error occurred during Siteimprove field control add.")]
+        public string ErrorAddingFieldControl
+        {
+            get
+            {
+                return this["ErrorAddingFieldControl"];
+            }
+        }
+
+        [ResourceEntry("ErrorRemovingVirtualPath", Value = "Siteimprove Plugin: Error removing Virtual path value.", Description = "Displayed when Siteimprove module is uninstalled and an error occurred during modification of VirtualPath settings.")]
+        public string ErrorRemovingVirtualPath
+        {
+            get
+            {
+                return this["ErrorRemovingVirtualPath"];
+            }
+        }
+
+        [ResourceEntry("ErrorRemovingScriptConfig", Value = "Siteimprove Plugin: Error removing script extension.", Description = "Displayed when Siteimprove module is uninstalled and an error occurred during modification of content details scripts settings.")]
+        public string ErrorRemovingScriptConfig
+        {
+            get
+            {
+                return this["ErrorRemovingScriptConfig"];
+            }
+        }
+
+        [ResourceEntry("ErrorRemovingFieldControl", Value = "Siteimprove Plugin: Error removing Siteimprove overlay field control.", Description = "Displayed when Siteimprove module is uninstalled and an error occurred during modification of Siteimprove field control.")]
+        public string ErrorRemovingFieldControl
+        {
+            get
+            {
+                return this["ErrorRemovingFieldControl"];
+            }
+        }
+
+        [ResourceEntry("ErrorAddingCspValuesInConfig", Value = "Siteimprove Plugin: Error adding Content-Security-Policy header values.", Description = "Displayed when Siteimprove module is installed and an error occurred during modification of WebSecurity settings.")]
+        public string ErrorAddingCspValuesInConfig
+        {
+            get
+            {
+                return this["ErrorAddingCspValuesInConfig"];
+            }
+        }
+
+        [ResourceEntry("ErrorRemovingCspValuesInConfig", Value = "Siteimprove Plugin: Error removing Content-Security-Policy header values.", Description = "Displayed when Siteimprove module is uninstalled and an error occurred during modification of WebSecurity settings.")]
+        public string ErrorRemovingCspValuesInConfig
+        {
+            get
+            {
+                return this["ErrorRemovingCspValuesInConfig"];
             }
         }
     }

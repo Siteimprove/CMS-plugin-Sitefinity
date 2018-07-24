@@ -1,7 +1,6 @@
-﻿using Telerik.Sitefinity.Web;
-using Telerik.Sitefinity.Web.UI.NavigationControls;
+﻿using Siteimprove.Integration.Sitefinity.Mvc.Controllers;
 using Siteimprove.Integration.Sitefinity.Mvc.ViewModels;
-using Siteimprove.Integration.Sitefinity.Mvc.Controllers;
+using Telerik.Sitefinity.Web;
 
 namespace Siteimprove.Integration.Sitefinity.Mvc.Models
 {
@@ -15,11 +14,7 @@ namespace Siteimprove.Integration.Sitefinity.Mvc.Models
             var overlayModel = base.GetViewModel();
 
             var currentNode = SiteMapBase.GetCurrentNode();
-            if (currentNode != null)
-            {
-                var url = NavigationUtilities.ResolveUrl(currentNode, true);
-                overlayModel.PageUrl = UrlPath.ResolveUrl(url, true, true);
-            }
+            overlayModel.PageUrl = this.UrlModel.ResolveUrlFromSiteMapNode(currentNode);
 
             return overlayModel;
         }

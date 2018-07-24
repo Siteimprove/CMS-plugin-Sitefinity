@@ -1,14 +1,11 @@
 # Siteimprove
 
-The Siteimprove CMS Plugin bridges the gap between Progress Sitefinity CMS and the Siteimprove Intelligence Platform. You are able to put your Siteimprove results to use where they are most valuable – during your content creation and editing process as well as during any operation in the CMS backend pages.
+The Siteimprove CMS Plugin bridges the gap between Progress Sitefinity CMS and the Siteimprove Intelligence Platform. You are able to put your Siteimprove results to use where they are most valuable â€“ during your content creation and editing process as well as during any operation in the CMS backend pages.
 
 ## Installation
+
 ### Getting Started
-The project is available in the NuGet gallery. You can click on [https://www.nuget.org/packages/Siteimprove.Integration.Sitefinity](https://www.nuget.org/packages/Siteimprove.Integration.Sitefinity) to check if there is a version of the package that matches your Sitefinity version. If there is a package version that is an exact match with yours, you can install the Siteimprove plugin via NuGet and skip the installation steps below. 
 
-If you Sitefinity version is different, please go through the following installation steps to prepare a build that matches your specific Sitefinity version.
-
-### Clone the repo
 - Clone the repository using the command `git clone https://github.com/Siteimprove/CMS-plugin-Sitefinity.git` and checkout the `master` branch. 
 
 ### Build the Project
@@ -20,20 +17,16 @@ You will also need to make sure that your targeted Sitefinity version matches th
 - If you are adding the Plugin as part of a Sitefinity solution, ensure that the main SitefinityWebApp project is the startup project for the solution
 
 ### Activation
-The Plugin leverages the *PreApplicationStartMethodAttribute* to hook to the Sitefinity startup process and self-install itself. This is done using the approach described in the following [blog post](https://www.sitefinity.com/blogs/peter-marinovs-blog/2013/03/20/creating-self-installing-widgets-and-modules-in-sitefinity). Assuming, you have built the project, all you need to do to activate the Plugin is to:
+The Plugin leverages the *PreApplicationStartMethodAttribute* to hook to the Sitefinity startup process and self-install itself. This is done using the approach described in the following [blog post](https://www.sitefinity.com/blogs/peter-marinovs-blog/2013/03/20/creating-self-installing-widgets-and-modules-in-sitefinity). Assuming, you have build the project, all you need to do to activate the Plugin is to:
 
-- Ensure that the compiled `Siteimprove.Integration.Sitefinity.dll` assembly is in the bin folder of your Sitefinity solution
-- Once the solution runs successfully, authenticate as administrator and go to the *[Administration » Modules & Services](https://docs.sitefinity.com/activate-and-deactivate-modules)*
-- Simply find the "Siteimprove Module" and ensure the modules is Active
+- Ensure that the compiled assembly is in the bin folder of your Sitefinity solution
+- Once the solution runs successfully, authenticate as administrator and go to the *[Administration Â» Modules & Services](https://docs.sitefinity.com/activate-and-deactivate-modules)*
+- Simply find the "Siteimprove Module" and install it to switch it on
 
 If you were successful, you should see the Siteimprove overlay onto the next and every backend Sitefinity page
 
-![Image of Overlay](https://user-images.githubusercontent.com/2509966/40830732-da7a752e-658f-11e8-9ed3-519ae197ec88.png)
-
 ## Configuration Options
 The Siteimprove Plugin has the following configuration options, which are located under `Settings > Advanced Settings > Siteimprove`
-
-![Image of settings](https://user-images.githubusercontent.com/2509966/40831548-fc1caa56-6591-11e8-8acc-b5431427a655.png)
 
 ### Log Activity in the Browser Console
 Checking this setting to True, will generate logs in the browser console, so that you can monitor the activity of the plugin. Useful for debugging on just ensuring that it works as expected.
@@ -64,12 +57,26 @@ Thus, it is recommended to include the API tokens in your configuration transfor
 If the Plugin cannot resolve the API tokens for a given domain, it will use the Siteimprove external API to fetch them and upon successful fetching will store them in the `SiteimproveConfig.config`. 
 
 - Ensure that the web server can reach the following two Urls, on which the Siteimprove's API is being used to request tokens and recheck operations:
-⋅⋅* https://api-gateway.siteimprove.com/cms-recheck
-⋅⋅* https://my2.siteimprove.com/auth/token
+â‹…â‹…* https://api-gateway.siteimprove.com/cms-recheck
+â‹…â‹…* https://my2.siteimprove.com/auth/token
 
 ## Troubleshooting
-In case of errors, the plugin will provide verbose error logging using the Sitefinity default error logger. In case you are monitoring its production performance or are trying to troubleshoot its behavior, your should check the Sitefinity error logs for details
+In case of errors, the plugin will provide verbose error logging using the Sitefinity default error logger. In case you are monitoring its production performance or are trying to troubleshoot its behavior, your should check the Sitefinity error logs for details.
 
+### Security
+Since Sitefinity 11, there is the Web Security Module, which runs alongside with Sitefinity. The module enforces many security rules, which control the resources that the user agent is allowed to load. It specifies the server origins and script endpoints for page resources.
+
+During inital installation or upgrade, the Siteimprove Plugin should programatically modify those values, so that the required scripts are allowed to be loaded onto the Sitefinity pages. If for some reason, this operation is not succesffull, you may see "Content-Security-Policy" error in the browser.
+
+In case of Content-Security-Policy error, ensure that the correct values are added in the WebSecurity section in the advanced configuration.
+Go to `Settings > Advanced Settings > WebSecurity > HttpSecurityHeaders > Response Headers > Content-Security-Policy`. Content-Security-Policy HTTP header controls the resources that the user agent is allowed to load. The `Http header value` contains semicolon delimited values for every resource type of the Content-Security-Policy header. Edit this value and ensure the resource types from below contain the following values:
+- `script-src` contains `https://cdn.siteimprove.net`
+- `connect-src` contains `https://*.siteimprove.com`
+- `child-src` contains `https://*.siteimprove.com`
+
+Save these settings.
+
+For more information on the Web Security Module in Sitefinity, visit the [official Sitefinity documentation](https://docs.sitefinity.com/predefined-security-headers-in-http-response)
 
 ## License
 The code of this repository is licensed using MIT license.

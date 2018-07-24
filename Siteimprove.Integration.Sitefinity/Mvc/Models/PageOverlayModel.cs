@@ -1,11 +1,6 @@
-﻿using System;
-using Telerik.Sitefinity.Services;
+﻿using Siteimprove.Integration.Sitefinity.Mvc.ViewModels;
 using Siteimprove.Integration.Sitefinity.Web;
-using Siteimprove.Integration.Sitefinity.Mvc.ViewModels;
-using Telerik.Sitefinity.Configuration;
-using Siteimprove.Integration.Sitefinity.Configuration;
-using Telerik.Sitefinity.Localization;
-using Siteimprove.Integration.Sitefinity.Resources;
+using Telerik.Sitefinity.Services;
 
 namespace Siteimprove.Integration.Sitefinity.Mvc.Models
 {
@@ -16,7 +11,8 @@ namespace Siteimprove.Integration.Sitefinity.Mvc.Models
     {
         protected IControllerHost _controllerHost;
         protected ITokenModel _tokenModel;
-        protected IUrlModel _urlMode;
+        protected IUrlModel _urlModel;
+        protected IConfigModel _configModel;
 
         public string CurrentDomain
         {
@@ -54,34 +50,35 @@ namespace Siteimprove.Integration.Sitefinity.Mvc.Models
         {
             get
             {
-                if (this._urlMode == null)
-                    this._urlMode = new UrlModel();
+                if (this._urlModel == null)
+                    this._urlModel = new UrlModel();
 
-                return this._urlMode;
+                return this._urlModel;
+            }
+        }
+
+        public IConfigModel ConfigModel
+        {
+            get
+            {
+                if (this._configModel == null)
+                    this._configModel = new ConfigModel();
+
+                return this._configModel;
             }
         }
 
         public virtual OverlayViewModel GetViewModel()
         {
-            var overlayModel = new OverlayViewModel();
-            overlayModel.Domain = this.CurrentDomain;
-            overlayModel.Token = this.TokenModel.GetTokenCreateIfNull(this.UrlModel.ResolveDomainFrom(this.CurrentDomain));
-            overlayModel.ExternalScript = this.GetSiteimproveScript();
-            overlayModel.ShouldLogActivity = Config.Get<SiteimproveConfig>().LogActivityInTheConsole;
-            
+            var overlayModel = new OverlayViewModel
+            {
+                Domain = this.CurrentDomain,
+                Token = this.TokenModel.GetTokenCreateIfNull(this.UrlModel.ResolveDomainFrom(this.CurrentDomain)),
+                ExternalScript = this.ConfigModel.GetSiteimproveScript(this.UrlModel),
+                ShouldLogActivity = this.ConfigModel.GetShouldLogActivityValue()
+            };
+
             return overlayModel;
-        }
-
-        private ExternalScriptViewModel GetSiteimproveScript()
-        {
-            var script = new ExternalScriptViewModel();
-            script.Url = Config.Get<SiteimproveConfig>().ScriptUrl;
-            script.LoadAsync = false;
-
-            if (string.IsNullOrEmpty(script.Url) || !this.UrlModel.IsUrlValid(script.Url))
-                throw new ArgumentException(Res.Get<SiteimproveResources>().ErrorScriptUrlNotValid);
-
-            return script; 
         }
 
         public abstract void PopulateControllerHost();
