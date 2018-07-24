@@ -12,12 +12,13 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>A Siteimprove plugin for Progress Sitefinity CMS...</summary>
     <description>$description$</description>
-    <releaseNotes>Support for Sitefinity 10.2.6600, offical Progres Sitefinity CMS version 10.2</releaseNotes>
+    <releaseNotes>Support for Sitefinity 11.0.6700, offical Progres Sitefinity CMS version 11.0</releaseNotes>
     <copyright>Copyright 2018, Siteimprove</copyright>
     <tags>Progress Sitefinity Siteimprove Plugin</tags>
     <dependencies>
-      <dependency id="Telerik.Sitefinity.Core" version="10.2.6600" />
-      <dependency id="Telerik.Sitefinity.Feather.Core" version="10.2.6600" />
+      <dependency id="Telerik.Sitefinity.Core" version="11.0.6700" />
+      <dependency id="Telerik.Sitefinity.Feather.Core" version="11.0.6700" />
+	  <dependency id="Progress.Sitefinity.WebSecurity" version="11.0.6700" />
     </dependencies>
   </metadata>
 </package>

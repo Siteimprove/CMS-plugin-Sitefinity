@@ -1,6 +1,6 @@
 # Siteimprove
 
-The Siteimprove CMS Plugin bridges the gap between Progress Sitefinity CMS and the Siteimprove Intelligence Platform. You are able to put your Siteimprove results to use where they are most valuable â€“ during your content creation and editing process as well as during any operation in the CMS backend pages.
+The Siteimprove CMS Plugin bridges the gap between Progress Sitefinity CMS and the Siteimprove Intelligence Platform. You are able to put your Siteimprove results to use where they are most valuable – during your content creation and editing process as well as during any operation in the CMS backend pages.
 
 ## Installation
 
@@ -20,7 +20,7 @@ You will also need to make sure that your targeted Sitefinity version matches th
 The Plugin leverages the *PreApplicationStartMethodAttribute* to hook to the Sitefinity startup process and self-install itself. This is done using the approach described in the following [blog post](https://www.sitefinity.com/blogs/peter-marinovs-blog/2013/03/20/creating-self-installing-widgets-and-modules-in-sitefinity). Assuming, you have build the project, all you need to do to activate the Plugin is to:
 
 - Ensure that the compiled assembly is in the bin folder of your Sitefinity solution
-- Once the solution runs successfully, authenticate as administrator and go to the *[Administration Â» Modules & Services](https://docs.sitefinity.com/activate-and-deactivate-modules)*
+- Once the solution runs successfully, authenticate as administrator and go to the *[Administration » Modules & Services](https://docs.sitefinity.com/activate-and-deactivate-modules)*
 - Simply find the "Siteimprove Module" and install it to switch it on
 
 If you were successful, you should see the Siteimprove overlay onto the next and every backend Sitefinity page
@@ -57,8 +57,8 @@ Thus, it is recommended to include the API tokens in your configuration transfor
 If the Plugin cannot resolve the API tokens for a given domain, it will use the Siteimprove external API to fetch them and upon successful fetching will store them in the `SiteimproveConfig.config`. 
 
 - Ensure that the web server can reach the following two Urls, on which the Siteimprove's API is being used to request tokens and recheck operations:
-â‹…â‹…* https://api-gateway.siteimprove.com/cms-recheck
-â‹…â‹…* https://my2.siteimprove.com/auth/token
+⋅⋅* https://api-gateway.siteimprove.com/cms-recheck
+⋅⋅* https://my2.siteimprove.com/auth/token
 
 ## Troubleshooting
 In case of errors, the plugin will provide verbose error logging using the Sitefinity default error logger. In case you are monitoring its production performance or are trying to troubleshoot its behavior, your should check the Sitefinity error logs for details.

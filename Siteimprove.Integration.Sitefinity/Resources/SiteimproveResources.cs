@@ -174,7 +174,7 @@ namespace Siteimprove.Integration.Sitefinity.Resources
                 return this["ErrorRecheckPageException"];
             }
         }
-
+        
         [ResourceEntry("ErrorFetchTokenResponse", Value = "Request for token at {0} did not return status 200 OK, but status {1} instead. The returned content was {2}", Description = "Error message used upon failed response on the fetching token")]
         public string ErrorFetchTokenResponse
         {

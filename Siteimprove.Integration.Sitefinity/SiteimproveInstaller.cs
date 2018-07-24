@@ -7,6 +7,7 @@ using Telerik.Sitefinity.Restriction;
 using Telerik.Sitefinity.Web.UI.Fields.Config;
 using Telerik.Sitefinity.Web.UI.ContentUI.Config;
 using Siteimprove.Integration.Sitefinity.Resources;
+using Telerik.Sitefinity.WebSecurity.Configuration;
 using Siteimprove.Integration.Sitefinity.FieldControls;
 using Telerik.Sitefinity.Web.UI.ContentUI.Views.Backend.Master.Config;
 
@@ -17,15 +18,18 @@ namespace Siteimprove.Integration.Sitefinity
         public void Install(SiteInitializer initializer)
         {
             this.RegisterCustomScripts(initializer);
+            this.AddSiteimproveToWebSecurityConfig();
         }
 
         public void UpgradeTo10_2_6600_1(SiteInitializer initializer)
         {
             this.RegisterCustomScripts(initializer);
+            this.AddSiteimproveToWebSecurityConfig();
         }
 
         public void Uninstall(SiteInitializer initializer)
         {
+            this.RemoveSiteimproveFromWebSecurityConfig();
             this.RemoveCustomScripts();
         }
 
@@ -260,6 +264,120 @@ namespace Siteimprove.Integration.Sitefinity
         private const string OverlayScriptCreateFieldName = "SiteimproveOverlayScriptCreate";
         private const string OverlayScriptDuplicateFieldName = "SiteimproveOverlayScriptDuplicate";
         private const string OverlayScriptEditFieldName = "SiteimproveOverlayScriptEdit";
+
+        #endregion
+
+        #region Content-Security-Policy
+
+        private void AddSiteimproveToWebSecurityConfig()
+        {
+            try
+            {
+                var configManager = ConfigManager.GetManager();
+                var webSecurityConfig = configManager.GetSection<WebSecurityConfig>();
+                var headers = webSecurityConfig.HttpSecurityHeaders.ResponseHeaders;
+
+                bool hasChanges = false;
+
+                var cspHeaders = headers[SiteimproveInstaller.CspSectionName].Value;
+                string newSettingValue = cspHeaders;
+
+                using (new UnrestrictedModeRegion())
+                {
+                    if (!this.HeaderContainValue(newSettingValue, SiteimproveInstaller.ScriptSrcHeaderName, SiteimproveInstaller.SiteimrpoveUrl1))
+                    {
+                        newSettingValue = this.InsertHeaderValue(newSettingValue, SiteimproveInstaller.ScriptSrcHeaderName, SiteimproveInstaller.SiteimrpoveUrl1);
+                        hasChanges = true;
+                    }
+
+                    if (!this.HeaderContainValue(newSettingValue, SiteimproveInstaller.ConnectSrcHeaderName, SiteimproveInstaller.SiteimrpoveUrl2))
+                    {
+                        newSettingValue = this.InsertHeaderValue(newSettingValue, SiteimproveInstaller.ConnectSrcHeaderName, SiteimproveInstaller.SiteimrpoveUrl2);
+                        hasChanges = true;
+                    }
+
+                    if (!this.HeaderContainValue(newSettingValue, SiteimproveInstaller.ChildSrcHeaderName, SiteimproveInstaller.SiteimrpoveUrl2))
+                    {
+                        newSettingValue = this.InsertHeaderValue(newSettingValue, SiteimproveInstaller.ChildSrcHeaderName, SiteimproveInstaller.SiteimrpoveUrl2);
+                        hasChanges = true;
+                    }
+
+                    if (hasChanges)
+                    {
+                        configManager.Provider.SuppressSecurityChecks = true;
+                        headers[SiteimproveInstaller.CspSectionName].Value = newSettingValue;
+                        configManager.SaveSection(webSecurityConfig);
+                        configManager.Provider.SuppressSecurityChecks = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = Res.Get<SiteimproveResources>().ErrorAddingCspValuesInConfig;
+                throw new Exception(errorMessage, ex);
+            }
+        }
+
+        private void RemoveSiteimproveFromWebSecurityConfig()
+        {
+            try
+            {
+                var configManager = ConfigManager.GetManager();
+                var webSecurityConfig = configManager.GetSection<WebSecurityConfig>();
+                if (webSecurityConfig != null)
+                {
+                    var headers = webSecurityConfig?.HttpSecurityHeaders?.ResponseHeaders;
+                    var cspHeaders = headers[SiteimproveInstaller.CspSectionName]?.Value;
+
+                    if (cspHeaders == null)
+                        return;
+
+                    using (new UnrestrictedModeRegion())
+                    {
+                        cspHeaders = this.RemoveHeaderValue(cspHeaders, SiteimproveInstaller.ScriptSrcHeaderName, SiteimproveInstaller.SiteimrpoveUrl1);
+                        cspHeaders = this.RemoveHeaderValue(cspHeaders, SiteimproveInstaller.ConnectSrcHeaderName, SiteimproveInstaller.SiteimrpoveUrl2);
+                        cspHeaders = this.RemoveHeaderValue(cspHeaders, SiteimproveInstaller.ChildSrcHeaderName, SiteimproveInstaller.SiteimrpoveUrl2);
+
+                        configManager.Provider.SuppressSecurityChecks = true;
+                        headers[SiteimproveInstaller.CspSectionName].Value = cspHeaders;
+                        configManager.SaveSection(webSecurityConfig);
+                        configManager.Provider.SuppressSecurityChecks = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = Res.Get<SiteimproveResources>().ErrorRemovingCspValuesInConfig;
+                throw new Exception(errorMessage, ex);
+            }
+        }
+
+        private bool HeaderContainValue(string sfSettingValue, string headerName, string headerValue)
+        {
+            var headerMatch = System.Text.RegularExpressions.Regex.Match(sfSettingValue, headerName + @".*?;");
+            bool isMatch = headerMatch.Value.Contains(headerValue);
+            return isMatch;
+        }
+
+        private string InsertHeaderValue(string sfSettingValue, string headerName, string headerValue)
+        {
+            var resultValue = System.Text.RegularExpressions.Regex.Replace(sfSettingValue, headerName + @"\s([^;]*)", headerName + " $1 " + headerValue);
+            return resultValue;
+        }
+
+        private string RemoveHeaderValue(string sfSettingValue, string headerName, string headerValue)
+        {
+            var result = sfSettingValue.Replace(" " + headerValue, string.Empty);
+            return result;
+        }
+
+        private const string CspSectionName = "Content-Security-Policy";
+        private const string SiteimrpoveUrl1 = "https://cdn.siteimprove.net";
+        private const string SiteimrpoveUrl2 = "https://*.siteimprove.com";
+
+        private const string ScriptSrcHeaderName = "script-src";
+        private const string ConnectSrcHeaderName = "connect-src";
+        private const string ChildSrcHeaderName = "child-src";
 
         #endregion
     }
