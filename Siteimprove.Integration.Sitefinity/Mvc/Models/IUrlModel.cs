@@ -13,6 +13,8 @@ namespace Siteimprove.Integration.Sitefinity.Mvc.Models
 
         string ResolveDomainFrom(string url);
 
+        string ResolveUrlFrom(Guid rootId, Guid pageId, string culture);
+
         string ResolveUrlFromSiteMapNode(SiteMapNode node);
 
         string ResolveDomainFromPageNode(PageNode node);
