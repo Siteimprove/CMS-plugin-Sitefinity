@@ -77,6 +77,30 @@ namespace Siteimprove.Integration.Sitefinity.Mvc.Controllers
             }
         }
 
+        [Route("~/siteimprove/properties/{rootId}/{pageId}/{culture?}")]
+        [HttpGet]
+        public JsonResult GetOverlayProperties(Guid rootId, Guid pageId, string culture = null)
+        {
+            try
+            {
+                var model = new EditPropertiesOverlayModel();
+                var viewModel = model.GetViewModel(rootId, pageId, culture);
+                var result = new
+                {
+                    Token = viewModel.Token,
+                    ShouldLogActivity = viewModel.ShouldLogActivity,
+                    Domain = viewModel.Domain,
+                    PageUrl = viewModel.PageUrl
+                };
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception exception)
+            {
+                Log.Write(Res.Get<SiteimproveResources>().ErrorOverlayWidgetLoading + this.HttpContext.Request.Url.AbsoluteUri + Environment.NewLine + exception, ConfigurationPolicy.ErrorLog);
+                throw new ApplicationException();
+            }
+        }
+
         protected override void HandleUnknownAction(string actionName)
         {
             this.ActionInvoker.InvokeAction(this.ControllerContext, "Index");

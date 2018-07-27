@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Web;
+using Telerik.Sitefinity.Localization;
 using Telerik.Sitefinity.Multisite;
 using Telerik.Sitefinity.Pages.Model;
 using Telerik.Sitefinity.Services;
@@ -35,6 +38,31 @@ namespace Siteimprove.Integration.Sitefinity.Mvc.Models
             return result;
         }
 
+        public string ResolveUrlFrom(Guid rootId, Guid pageId, string culture = null)
+        {
+            var url = string.Empty;
+            var site = this.GetSite(rootId);
+            using (new SiteRegion(site))
+            {
+                var siteMapProvider = SiteMapBase.GetCurrentProvider() as SiteMapBase;
+                
+                if (!string.IsNullOrEmpty(culture))
+                {
+                    using (new CultureRegion(culture))
+                    {
+                        var sitemapNode = siteMapProvider.FindSiteMapNodeFromKey(pageId.ToString());
+                        url = this.ResolveUrlFromSiteMapNode(sitemapNode);
+                    }
+                } else
+                {
+                    var sitemapNode = siteMapProvider.FindSiteMapNodeFromKey(pageId.ToString());
+                    url = this.ResolveUrlFromSiteMapNode(sitemapNode);
+                }
+            }
+
+            return url;
+        }
+
         public string ResolveUrlFromSiteMapNode(SiteMapNode node)
         {
             if (node != null)
@@ -50,16 +78,7 @@ namespace Siteimprove.Integration.Sitefinity.Mvc.Models
         {
             if (node != null)
             {
-                ISite site;
-                if (SystemManager.CurrentContext.IsMultisiteMode)
-                {
-                    site = SystemManager.CurrentContext.MultisiteContext.GetSites().FirstOrDefault(s => s.SiteMapRootNodeId == node.RootNodeId);
-                }
-                else
-                {
-                    site = SystemManager.CurrentContext.CurrentSite;
-                }
-
+                var site = this.GetSite(node.RootNodeId);
                 var siteUrl = site.GetUri().AbsoluteUri;
                 return siteUrl.TrimEnd('/');
             }
@@ -89,6 +108,21 @@ namespace Siteimprove.Integration.Sitefinity.Mvc.Models
             }
 
             return domain;
+        }
+
+        private ISite GetSite(Guid rootNodeId)
+        {
+            ISite site;
+            if (SystemManager.CurrentContext.IsMultisiteMode)
+            {
+                site = SystemManager.CurrentContext.MultisiteContext.GetSites().FirstOrDefault(s => s.SiteMapRootNodeId == rootNodeId);
+            }
+            else
+            {
+                site = SystemManager.CurrentContext.CurrentSite;
+            }
+
+            return site;
         }
     }
 }
