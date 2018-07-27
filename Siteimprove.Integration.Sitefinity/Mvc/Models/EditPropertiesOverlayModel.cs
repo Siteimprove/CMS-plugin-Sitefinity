@@ -47,6 +47,14 @@ namespace Siteimprove.Integration.Sitefinity.Mvc.Models
             }
         }
 
+        public OverlayViewModel GetViewModel(Guid rootId, Guid pageId, string culture)
+        {
+            var overlayViewModel = this.GetViewModelByPage(pageId.ToString());
+            overlayViewModel.PageUrl = this.UrlModel.ResolveUrlFrom(rootId, pageId, culture);
+
+            return overlayViewModel;
+        }
+
         public OverlayViewModel GetViewModelByPage(string pageId)
         {
             var overlayModel = new OverlayViewModel
